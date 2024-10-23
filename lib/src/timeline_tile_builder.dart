@@ -248,6 +248,7 @@ class TimelineTileBuilder {
     IndexedValueBuilder<double>? itemExtentBuilder,
     IndexedValueBuilder<double>? nodePositionBuilder,
     IndexedValueBuilder<double>? indicatorPositionBuilder,
+    double? dashedConnectorGap,
   }) {
     return TimelineTileBuilder(
       itemCount: itemCount,
@@ -259,16 +260,16 @@ class TimelineTileBuilder {
       startConnectorBuilder: _createConnectedStartConnectorBuilder(
         connectionDirection: connectionDirection,
         firstConnectorBuilder: (context) =>
-            _createStyledConnectorBuilder(firstConnectorStyle)(context),
+            _createStyledConnectorBuilder(firstConnectorStyle, dashedConnectorGap)(context),
         connectorBuilder: (context, index, __) => _createStyledConnectorBuilder(
-            connectorStyleBuilder?.call(context, index))(context),
+            connectorStyleBuilder?.call(context, index), dashedConnectorGap)(context),
       ),
       endConnectorBuilder: _createConnectedEndConnectorBuilder(
         connectionDirection: connectionDirection,
         lastConnectorBuilder: (context) =>
-            _createStyledConnectorBuilder(lastConnectorStyle)(context),
+            _createStyledConnectorBuilder(lastConnectorStyle,dashedConnectorGap)(context),
         connectorBuilder: (context, index, __) => _createStyledConnectorBuilder(
-            connectorStyleBuilder?.call(context, index))(context),
+            connectorStyleBuilder?.call(context, index),dashedConnectorGap)(context),
         itemCount: itemCount,
       ),
       itemExtent: itemExtent,
@@ -303,6 +304,7 @@ class TimelineTileBuilder {
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
+    double? dashedConnectorGap,
   }) {
     return TimelineTileBuilder(
       itemCount: itemCount,
@@ -312,9 +314,9 @@ class TimelineTileBuilder {
       indicatorBuilder: (context, index) =>
           _createStyledIndicatorBuilder(indicatorStyle)(context),
       startConnectorBuilder: (context, _) =>
-          _createStyledConnectorBuilder(connectorStyle)(context),
+          _createStyledConnectorBuilder(connectorStyle, dashedConnectorGap)(context),
       endConnectorBuilder: (context, _) =>
-          _createStyledConnectorBuilder(connectorStyle)(context),
+          _createStyledConnectorBuilder(connectorStyle, dashedConnectorGap)(context),
       itemExtent: itemExtent,
       itemExtentBuilder: itemExtentBuilder,
       nodePositionBuilder: nodePositionBuilder,
@@ -486,13 +488,16 @@ class TimelineTileBuilder {
     };
   }
 
-  static WidgetBuilder _createStyledConnectorBuilder(ConnectorStyle? style) {
+  static WidgetBuilder _createStyledConnectorBuilder(
+    ConnectorStyle? style,
+    double? dashedConnectorGap,
+  ) {
     return (_) {
       switch (style) {
         case ConnectorStyle.solidLine:
           return Connector.solidLine();
         case ConnectorStyle.dashedLine:
-          return Connector.dashedLine();
+          return Connector.dashedLine(gap: dashedConnectorGap);
         case ConnectorStyle.transparent:
         default:
           return Connector.transparent();
